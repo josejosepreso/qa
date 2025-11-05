@@ -1,0 +1,1 @@
+C:\Users\CC480005\AppData\Local\Programs\Python\Python313\python.exe %*

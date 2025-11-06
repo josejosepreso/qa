@@ -12,7 +12,7 @@ from utils.history import History
 driver = get_driver()
 
 class CreditPayment:
-	@History.register_credit_payment
+	@History.register_transaction(TransactionType.CREDIT_PAYMENT)
 	@staticmethod
 	def own(credit_number: str):
 		Action.click(Selector.BTN_CREDIT_PAYMENT_HOMESCREEN)

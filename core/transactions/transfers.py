@@ -12,7 +12,7 @@ from utils.history import History
 driver = get_driver()
 
 class Transfer:
-	@History.register_transfer
+	@History.register_transaction(TransactionType.TRANSFER)
 	@staticmethod
 	def third_party(
 			destination_account,
@@ -54,7 +54,7 @@ class Transfer:
 		
 		time.sleep(1)
 		
-	@History.register_transfer
+	@History.register_transaction(TransactionType.TRANSFER)
 	@staticmethod
 	def own_account(
 			destination_account_number = None,
@@ -83,7 +83,7 @@ class Transfer:
 		
 		time.sleep(1)
 
-	@History.register_transfer
+	@History.register_transaction(TransactionType.TRANSFER)
 	@staticmethod
 	def ach(
 			destination_account_number = Configuration.ACH_ACCOUNT_NUMBER,

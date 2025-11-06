@@ -12,7 +12,7 @@ from utils.history import History
 driver = get_driver()
 
 class CreditCardPayment:
-	@History.register_credit_card_payment
+	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def third_party(
 			credit_card_number: str = Configuration.THIRD_PARTY_CREDIT_CARD_NUMBER,
@@ -55,7 +55,7 @@ class CreditCardPayment:
 		
 		time.sleep(1)
 
-	@History.register_credit_card_payment
+	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def own(
 			credit_card_number: str = None,
@@ -102,7 +102,7 @@ class CreditCardPayment:
 		
 		time.sleep(1)
 
-	@History.register_credit_card_payment
+	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def ach(
 			credit_card_number: str = Configuration.ACH_CREDIT_CARD_NUMBER,

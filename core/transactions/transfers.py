@@ -13,16 +13,15 @@ driver = get_driver()
 
 class Transfer:
 	@History.register_transaction(TransactionType.TRANSFER)
+	@Action.navigate(TransactionType.TRANSFER)
 	@staticmethod
 	def third_party(
 			destination_account,
 			amount = Configuration.DEFAULT_AMOUNT,
 			origin_account = None
 	):
-		Action.click(Selector.BTN_TRANSFER_HOMESCREEN)
-
 		#
-		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.BTN_TRANSFER_OTHER_ACCOUNT)).click()
+		Action.click(Selector.BTN_TRANSFER_OTHER_ACCOUNT)
 		
 		#
 		if origin_account is not None:
@@ -55,14 +54,13 @@ class Transfer:
 		time.sleep(1)
 		
 	@History.register_transaction(TransactionType.TRANSFER)
+	@Action.navigate(TransactionType.TRANSFER)
 	@staticmethod
 	def own_account(
 			destination_account_number = None,
 			amount = Configuration.DEFAULT_AMOUNT,
 			origin_account_number = None
 	):
-		Action.click(Selector.BTN_TRANSFER_HOMESCREEN)
-
 		Action.click(Selector.CHECKBOX_DESTINATION_ACCOUNT_TYPE)
 		
 		Action.select_destination_account(destination_account_number)
@@ -84,6 +82,7 @@ class Transfer:
 		time.sleep(1)
 
 	@History.register_transaction(TransactionType.TRANSFER)
+	@Action.navigate(TransactionType.TRANSFER)
 	@staticmethod
 	def ach(
 			destination_account_number = Configuration.ACH_ACCOUNT_NUMBER,
@@ -92,10 +91,7 @@ class Transfer:
 			amount: int = Configuration.DEFAULT_AMOUNT,
 			origin_account_number: str = None
 	):
-		Action.click(Selector.BTN_TRANSFER_HOMESCREEN)
-
-		#
-		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.BTN_TRANSFER_OTHER_ACCOUNT)).click()
+		Action.click(Selector.BTN_TRANSFER_OTHER_ACCOUNT)
 
 		#
 		Action.select_ach(destination_account_bank)

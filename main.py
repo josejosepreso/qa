@@ -14,12 +14,13 @@ transfers = [
 
 try:
 	Action.login()
+	Transfer.own_account()
+	CreditCardPayment.own()
+	CreditPayment.third_party()
+	"""
 	Transfer.ach()
 	CreditCardPayment.ach()
 	CreditCardPayment.third_party()
-	CreditCardPayment.own()
-	Transfer.own_account()
-	"""
 	for destination_account, amount, origin_account in transfers:
 		Transfer.third_party(destination_account, amount, origin_account)
 	"""

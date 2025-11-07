@@ -11,7 +11,7 @@ from utils.database import DBRequest
 from core.elements_selectors import Selector
 from core.exceptions import TimeoutException
 import config.user as user
-from config.enums import ACH
+from config.enums import ACH, TransactionType
 
 driver = get_driver()
 
@@ -85,50 +85,94 @@ class Action:
 					return json.loads(res.body)
 					
 			retries += 1
-			
+
+	@staticmethod
+	def navigate(transaction_type: TransactionType):
+		def decorator(transaction):
+			def wrapper( *args, **kwargs ):
+				if driver.current_url != Configuration.BANCA_DIGITAL_HOME_URL:
+					driver.get(Configuration.BANCA_DIGITAL_HOME_URL)
+
+				driver.find_element(*Selector.HOMESCREEN_BTN_BG_BLUE_00).click()
+
+				WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.CONTAINER_TRANSACTION_OPTIONS))
+				labels = {
+						TransactionType.TRANSFER: "Transferir",
+						TransactionType.CREDIT_CARD_PAYMENT: "Pagar Tarjeta de Crédito",
+						TransactionType.CREDIT_PAYMENT: "Pagar Préstamo"
+				}
+
+				label = labels.get(transaction_type)
+				if not label:
+					raise Exception
+
+				transaction_options = list(filter(lambda l: l.text.strip() == label, driver.find_elements(*Selector.P_TRANSACTION_OPTION_LABEL)))
+				if not transaction_options:
+					raise Exception
+
+				assert len(transaction_options) == 1
+
+				transaction_options[0].click()
+
+				return transaction(*args, **kwargs)
+			return wrapper
+		return decorator
+
 	@staticmethod		
 	def login():
-		try:
-			driver.get(Configuration.BANCA_DIGITAL_LOGIN_URL)
-			
-			#
-			input_username = Action.get_element(*Selector.INPUT_USERNAME_LOGIN)
-			input_password = Action.get_element(*Selector.INPUT_USERNAME_PASSWORD)
+		driver.get(Configuration.BANCA_DIGITAL_LOGIN_URL)
+		
+		#
+		input_username = Action.get_element(*Selector.INPUT_USERNAME_LOGIN)
+		input_password = Action.get_element(*Selector.INPUT_USERNAME_PASSWORD)
 
-			#
-			input_username.clear()
-			input_password.clear()
+		#
+		input_username.clear()
+		input_password.clear()
+		
+		input_username.send_keys(user.USERNAME)
+		input_password.send_keys(user.USER_PASSWORD)
+		time.sleep(0.5)
+        #
+		Action.click(Selector.BTN_LOGIN)
+		
+		#
+		response = Action.get_response_body(Configuration.AUTH_SERVICE_URL).get("data", {})
+		
+		session_id = response.get("sessionId")
 			
-			input_username.send_keys(user.USERNAME)
-			input_password.send_keys(user.USER_PASSWORD)
-			time.sleep(0.5)
-            #
-			Action.click(Selector.BTN_LOGIN)
+		#
+		if response.get("duplicateSession", {}).get("active", False):
+			Action.click(Selector.BTN_DISMISS_DUPLICATE_SESSION)
+		
+		#
+		if response.get("daysRemaining") == 0:
+			Action.click(Selector.BTN_CHANGE_PASSWORD)
+			Action.click(Selector.LINK_HOME_SCREEN)
 			
-			#
-			response = Action.get_response_body(Configuration.AUTH_SERVICE_URL).get("data", {})
-			
-			session_id = response.get("sessionId")
-				
-			#
-			if response.get("duplicateSession", {}).get("active", False):
-				Action.click(Selector.BTN_DISMISS_DUPLICATE_SESSION)
-			
-			#
-			if response.get("daysRemaining") == 0:
-				Action.click(Selector.BTN_CHANGE_PASSWORD)
-				Action.click(Selector.LINK_HOME_SCREEN)
-				
-			#
-			WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.APP_MY_PRODUCTS))
-		except Exception:
-			raise
+		#
+		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.HOMESCREEN_SIDEBAR_MENU_OPTIONS))
 
 	@staticmethod
 	def select_destination_account(destination_account_number: str):
+		retries = 0
+		own_accounts = []
+		while not own_accounts:
+			if retries > Configuration.RETRIES_LIMIT:
+				driver.execute_script('alert("Usuario no tiene cuentas propias")')
+				raise Exception
+
+			if re.match("\\d+", driver.find_element(*Selector.P_OWN_ACCOUNT_NUMBER).text):
+				own_accounts = driver.find_elements(*Selector.P_OWN_ACCOUNT_NUMBER)
+
+			retries += 1
+			time.sleep(1)
+
 		if destination_account_number is None:
-			Action.click(Selector.DIV_FIRST_OWN_ACCOUNT_CARD)
+			own_accounts[0].click()
 			return
+
+		# TODO
 
 	@staticmethod
 	def select_origin_account(origin_account_number: str):
@@ -162,7 +206,7 @@ class Action:
 
 	@staticmethod
 	def select_ach(ach: ACH):
-		shift = ach.value - 2
+		shift = ach.value - 1
 
 		if shift <= 0:
 			return
@@ -175,5 +219,5 @@ class Action:
 		for _ in range(shift):
 			ach_swiper_next.click()
 
-		ach_swiper_slide = ach_swiper_options[ ach.value - 1 ]
+		ach_swiper_slide = ach_swiper_options[ ach.value ]
 		ach_swiper_slide.click()

@@ -13,6 +13,7 @@ driver = get_driver()
 
 class CreditCardPayment:
 	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
+	@Action.navigate(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def third_party(
 			credit_card_number: str = Configuration.THIRD_PARTY_CREDIT_CARD_NUMBER,
@@ -20,8 +21,6 @@ class CreditCardPayment:
 			currency: Currency = Currency.LPS,
 			origin_account_number: str = None
 	):
-		Action.click(Selector.BTN_CREDIT_CARD_PAYMENT_HOMESCREEN)
-
 		Action.click(Selector.BTN_OTHER_CREDIT_CARD)
 
 		if origin_account_number is not None:
@@ -56,6 +55,7 @@ class CreditCardPayment:
 		time.sleep(1)
 
 	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
+	@Action.navigate(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def own(
 			credit_card_number: str = None,
@@ -63,9 +63,16 @@ class CreditCardPayment:
 			currency: Currency = Currency.LPS,
 			origin_account_number: str = None
 	):
-		Action.click(Selector.BTN_CREDIT_CARD_PAYMENT_HOMESCREEN)
+		Action.click(Selector.BTN_OTHER_CREDIT_CARD)
 
-		credit_card = Action.get_element(*Selector.get_own_credit_card(1))
+		own_credit_cards = driver.find_elements(*Selector.DIV_OWN_CREDIT_CARD_CARD)
+
+		if not own_credit_cards:
+			driver.execute_script('alert("Usuario no tiene tarjetas de credito propias")')
+			raise Exception
+
+		# credit_card = Action.get_element(*Selector.get_own_credit_card(1))
+		credit_card = own_credit_cards[0]
 
 		if credit_card_number is not None:
 			# TODO
@@ -79,14 +86,16 @@ class CreditCardPayment:
 		if origin_account_number is not None:
 			Action.change_origin_account(origin_account)
 
-		if currency == Currency.LPS:
-			Action.click(Selector.BTN_SELECT_LPS_CURRENCY)
-		elif currency == Currency.USD:
-			Action.click(Selector.BTN_SELECT_USD_CURRENCY)
-		else:
-			raise Exception
+		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.CONTAINER_SELECT_CREDIT_CARD_PAYMENT_CURRENCY))
 
-		Action.click(Selector.BTN_CREDIT_CARD_CUSTOM_AMOUNT_PAYMENT)
+		driver.find_elements(*Selector.BTN_SELECT_CREDIT_CARD_PAYMENT_CURRENCY)[ 0 if currency == Currency.LPS else 1 ].click()
+
+		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.CONTAINER_SELECT_CREDIT_CARD_PAYMENT_AMOUNT_TYPE))
+
+		# TODO
+		payment_amount_type = CreditCardPaymentAmountType.CUSTOM
+		amount_type_button = driver.find_elements(*Selector.BTN_SELECT_CREDIT_CARD_PAYMENT_AMOUNT)[ payment_amount_type.value ]
+		amount_type_button.click()
 		#
 		Action.type(Selector.INPUT_CREDIT_CARD_PAYMENT_AMOUNT, amount)
 		Action.click(Selector.BTN_DO_CREDIT_CARD_PAYMENT)
@@ -103,6 +112,7 @@ class CreditCardPayment:
 		time.sleep(1)
 
 	@History.register_transaction(TransactionType.CREDIT_CARD_PAYMENT)
+	@Action.navigate(TransactionType.CREDIT_CARD_PAYMENT)
 	@staticmethod
 	def ach(
 			credit_card_number: str = Configuration.ACH_CREDIT_CARD_NUMBER,
@@ -111,8 +121,6 @@ class CreditCardPayment:
 			currency: Currency = Currency.LPS,
 			origin_account_number: str = None
 	):
-		Action.click(Selector.BTN_CREDIT_CARD_PAYMENT_HOMESCREEN)
-
 		Action.click(Selector.BTN_OTHER_CREDIT_CARD)
 
 		if origin_account_number is not None:

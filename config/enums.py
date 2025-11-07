@@ -20,3 +20,17 @@ class DocumentType(Enum):
 class Currency(Enum):
 	LPS = 1
 	USD = 2
+
+class Environment(Enum):
+	UAT = 1
+	DEV = 2
+	
+class TransactionType(Enum):
+	TRANSFER = 1
+	CREDIT_CARD_PAYMENT = 2
+	CREDIT_PAYMENT = 3
+	SERVICE_PAYMENT = 4
+
+class CreditCardPaymentAmountType(Enum):
+	MINIMUM = 1
+	CUSTOM = 2

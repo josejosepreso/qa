@@ -11,31 +11,31 @@ from utils.history import History
 
 driver = get_driver()
 
-class CreditPayment:
-	@History.register_transaction(TransactionType.CREDIT_PAYMENT)
+class LoanPayment:
+	@History.register_transaction(TransactionType.LOAN_PAYMENT)
+	@Action.navigate(TransactionType.LOAN_PAYMENT)
 	@staticmethod
-	def own(credit_number: str):
-		Action.click(Selector.BTN_CREDIT_PAYMENT_HOMESCREEN)
+	def own(loan_number: str):
 		pass
 
-	@History.register_transaction(TransactionType.CREDIT_PAYMENT)
-	@Action.navigate(TransactionType.CREDIT_PAYMENT)
+	@History.register_transaction(TransactionType.LOAN_PAYMENT)
+	@Action.navigate(TransactionType.LOAN_PAYMENT)
 	@staticmethod
 	def third_party(
-			credit_number: str = Configuration.THIRD_PARTY_CREDIT_NUMBER,
+			loan_number: str = Configuration.THIRD_PARTY_LOAN_NUMBER,
 			origin_account_number: str = None
 	):
-		Action.click(Selector.BTN_OTHER_CREDIT)
+		Action.click(Selector.BTN_OTHER_LOAN)
 
 		if origin_account_number is not None:
-			Action.change_origin_account(origin_account_number)
+			Action.set_origin_account(origin_account_number)
 
-		Action.type(Selector.INPUT_THIRD_PARTY_CREDIT_NUMBER, credit_number)
+		Action.type(Selector.INPUT_THIRD_PARTY_LOAN_NUMBER, loan_number)
 
-		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.element_to_be_clickable(Selector.BTN_CONFIRM_THIRD_PARTY_CREDIT_NUMBER)).click()
+		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.element_to_be_clickable(Selector.BTN_CONFIRM_THIRD_PARTY_LOAN_NUMBER)).click()
 
-		Action.click(Selector.BTN_DO_THIRD_PARTY_CREDIT_PAYMENT)
-		Action.click(Selector.BTN_CONFIRM_AMOUNT_THIRD_PARTY_CREDIT_PAYMENT)
+		Action.click(Selector.BTN_DO_THIRD_PARTY_LOAN_PAYMENT)
+		Action.click(Selector.BTN_CONFIRM_AMOUNT_THIRD_PARTY_LOAN_PAYMENT)
 
 		#
 		Action.type(Selector.INPUT_FIRST_OTP_DIGIT_MODAL, Action.get_OTP())
@@ -53,3 +53,13 @@ class CreditPayment:
 		Action.click(Selector.LINK_HOME_SCREEN)
 		
 		time.sleep(1)
+
+	@History.register_transaction(TransactionType.LOAN_PAYMENT)
+	@Action.navigate(TransactionType.LOAN_PAYMENT)
+	@staticmethod
+	def ach(
+			loan_number: str = Configuration.ACH_LOAN_NUMBER,
+			loan_bank: ACH = Configuration.ACH_LOAN_BANK,
+			origin_account_number: str = None
+	):
+		pass

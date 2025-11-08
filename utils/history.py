@@ -3,7 +3,7 @@ from config.enums import *
 class History:
 	_handlers = {
 		TransactionType.TRANSFER: "register_transfer"
-		, TransactionType.CREDIT_PAYMENT: "register_credit_payment"
+		, TransactionType.LOAN_PAYMENT: "register_loan_payment"
 		, TransactionType.CREDIT_CARD_PAYMENT: "register_credit_card_payment"
 		, TransactionType.SERVICE_PAYMENT: "register_service_payment"
 	}
@@ -12,7 +12,7 @@ class History:
 	def register_transaction(transaction_type: TransactionType):
 		def decorator(transaction):
 			def wrapper( *args, **kwargs ):
-				result = transaction(*args)
+				result = transaction( *args, **kwargs )
 
 				handler_name = History._handlers.get(transaction_type)
 				if not handler_name:
@@ -41,7 +41,7 @@ class History:
 		pass
 	
 	@staticmethod
-	def register_credit_payment(payment):
+	def register_loan_payment(payment):
 	    # TODO
 		pass
 	

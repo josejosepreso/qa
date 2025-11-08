@@ -13,6 +13,7 @@ class Selector:
 	P_TRANSACTION_OPTION_LABEL = css("p.u-text-blue-00.u-text-center.u-text-blue-80")
 	CONTAINER_TRANSACTION_OPTIONS = css("div.container-all-transactions")
 	#
+	CONTAINER_OWN_ACCOUNTS_SWITCHER = css("app-account-selector")
 	INPUT_USERNAME_LOGIN = css('[formcontrolname="username"]')
 	INPUT_USERNAME_PASSWORD = css('[formcontrolname="password"]')
 	INPUT_TRANSFER_AMOUNT = css('[inputcontroller="financial"]')
@@ -39,7 +40,7 @@ class Selector:
 	CONTAINER_SELECT_CREDIT_CARD_PAYMENT_AMOUNT_TYPE = css("app-transaction-quicks-amout")
 
 	## Pago prestamo
-	BTN_OTHER_CREDIT = css("div.btn-other")
+	BTN_OTHER_LOAN = css("div.btn-other")
 	
 	# by xpath
 	BTN_LOGIN = xpath("/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-sing-in/div/div[7]/app-login-form/div/div[2]/form/button")
@@ -49,9 +50,9 @@ class Selector:
 
 	## Pago prestamo
 	### A terceros
-	BTN_CONFIRM_THIRD_PARTY_CREDIT_NUMBER = xpath("/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-home-third-loans/app-home-transaction-third-party/div/div/div/app-step-one/div/div[3]/button")
-	BTN_DO_THIRD_PARTY_CREDIT_PAYMENT = xpath("/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-home-third-loans/app-home-transaction-third-party/div/div/div/app-step-two/div/button")
-	BTN_CONFIRM_AMOUNT_THIRD_PARTY_CREDIT_PAYMENT = xpath('//*[contains(@id, "mat-mdc-dialog-")]/div/div/app-dialog-confirm-transaction/div/div[2]/button[1]')
+	BTN_CONFIRM_THIRD_PARTY_LOAN_NUMBER = xpath("/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-home-third-loans/app-home-transaction-third-party/div/div/div/app-step-one/div/div[3]/button")
+	BTN_DO_THIRD_PARTY_LOAN_PAYMENT = xpath("/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-home-third-loans/app-home-transaction-third-party/div/div/div/app-step-two/div/button")
+	BTN_CONFIRM_AMOUNT_THIRD_PARTY_LOAN_PAYMENT = xpath('//*[contains(@id, "mat-mdc-dialog-")]/div/div/app-dialog-confirm-transaction/div/div[2]/button[1]')
 
 	## Pago TCR
 	BTN_CREDIT_CARD_PAYMENT_HOMESCREEN = xpath('/html/body/app-root/mat-drawer-container/mat-drawer-content/div/app-home/div[1]/div[1]/app-menu-management/div/div/app-options-management[2]/div/div[1]')
@@ -97,7 +98,7 @@ class Selector:
 	INPUT_CREDIT_CARD_NUMBER = name("accountNumber")
 
 	## Pago prestamo
-	INPUT_THIRD_PARTY_CREDIT_NUMBER = name("accountNumber")
+	INPUT_THIRD_PARTY_LOAN_NUMBER = name("accountNumber")
 
 	@staticmethod
 	def get_button_select_origin_account(idx: int):

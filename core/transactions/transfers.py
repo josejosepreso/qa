@@ -16,18 +16,18 @@ class Transfer:
 	@Action.navigate(TransactionType.TRANSFER)
 	@staticmethod
 	def third_party(
-			destination_account,
+			destination_account_number,
 			amount = Configuration.DEFAULT_AMOUNT,
-			origin_account = None
+			origin_account_number = None
 	):
 		#
 		Action.click(Selector.BTN_TRANSFER_OTHER_ACCOUNT)
 		
 		#
-		if origin_account is not None:
-			Action.change_origin_account(origin_account)
+		if origin_account_number is not None:
+			Action.set_origin_account(origin_account_number)
 		
-		Action.type(Selector.INPUT_ACCOUNT_NUMBER, destination_account)
+		Action.type(Selector.INPUT_ACCOUNT_NUMBER, destination_account_number)
 
 		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.element_to_be_clickable(Selector.BTN_CONFIRM_ACCOUNT_NUMBER)).click()
 		
@@ -92,6 +92,10 @@ class Transfer:
 			origin_account_number: str = None
 	):
 		Action.click(Selector.BTN_TRANSFER_OTHER_ACCOUNT)
+
+		#
+		if origin_account_number is not None:
+			Action.set_origin_account(origin_account_number)
 
 		#
 		Action.select_ach(destination_account_bank)

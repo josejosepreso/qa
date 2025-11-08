@@ -24,7 +24,7 @@ class CreditCardPayment:
 		Action.click(Selector.BTN_OTHER_CREDIT_CARD)
 
 		if origin_account_number is not None:
-			Action.change_origin_account(origin_account)
+			Action.set_origin_account(origin_account)
 
 		Action.type(Selector.INPUT_CREDIT_CARD_NUMBER, credit_card_number)
 
@@ -84,7 +84,7 @@ class CreditCardPayment:
 		credit_card.click()
 
 		if origin_account_number is not None:
-			Action.change_origin_account(origin_account)
+			Action.set_origin_account(origin_account)
 
 		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.CONTAINER_SELECT_CREDIT_CARD_PAYMENT_CURRENCY))
 
@@ -124,7 +124,7 @@ class CreditCardPayment:
 		Action.click(Selector.BTN_OTHER_CREDIT_CARD)
 
 		if origin_account_number is not None:
-			Action.change_origin_account(origin_account)
+			Action.set_origin_account(origin_account)
 
 		Action.select_ach(credit_card_bank)
 

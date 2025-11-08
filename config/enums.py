@@ -28,7 +28,7 @@ class Environment(Enum):
 class TransactionType(Enum):
 	TRANSFER = 1
 	CREDIT_CARD_PAYMENT = 2
-	CREDIT_PAYMENT = 3
+	LOAN_PAYMENT = 3
 	SERVICE_PAYMENT = 4
 
 class CreditCardPaymentAmountType(Enum):

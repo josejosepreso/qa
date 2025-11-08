@@ -99,7 +99,7 @@ class Action:
 				labels = {
 						TransactionType.TRANSFER: "Transferir",
 						TransactionType.CREDIT_CARD_PAYMENT: "Pagar Tarjeta de Crédito",
-						TransactionType.CREDIT_PAYMENT: "Pagar Préstamo"
+						TransactionType.LOAN_PAYMENT: "Pagar Préstamo"
 				}
 
 				label = labels.get(transaction_type)
@@ -107,8 +107,6 @@ class Action:
 					raise Exception
 
 				transaction_options = list(filter(lambda l: l.text.strip() == label, driver.find_elements(*Selector.P_TRANSACTION_OPTION_LABEL)))
-				if not transaction_options:
-					raise Exception
 
 				assert len(transaction_options) == 1
 
@@ -182,7 +180,7 @@ class Action:
 			Action.click(Selector.BTN_SELECT_ORIGIN_FIRST_OWN_ACCOUNT)
 
 	@staticmethod
-	def change_origin_account(origin_account_number: str):
+	def set_origin_account(origin_account_number: str):
 		if origin_account_number is None:
 			raise Exception
 
@@ -191,11 +189,13 @@ class Action:
 
 		Action.click(Selector.BTN_CHANGE_ORIGIN_ACCOUNT_NUMBER)
 
+		WebDriverWait(driver, Configuration.TIMEOUT_LIMIT).until(EC.visibility_of_element_located(Selector.CONTAINER_OWN_ACCOUNTS_SWITCHER))
+
 		idx = 3
 
 		while True:
 			try:
-				if Action.get_element(*Selector.get_p_origin_account_number(idx)).text.strip() == origin_account_number:
+				if driver.find_element(*Selector.get_p_origin_account_number(idx)).text.strip() == origin_account_number:
 					Action.click(Selector.get_button_select_origin_account(idx))
 					return
 			except Exception:
